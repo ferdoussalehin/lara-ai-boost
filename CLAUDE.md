@@ -185,6 +185,9 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
 - Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+- The default connection is `mysql` in this project, but supported connection names include `sqlite`, `mysql`, `mariadb`, `pgsql`, and `sqlsrv`.
+- Keep connection selection in `config/database.php` and use `DB::connection(...)` only when a non-default database is required.
+- Store credentials in `.env`, never commit production secrets, and use `database-schema` for schema inspection rather than reverse-engineering from code.
 
 ### Models
 

@@ -27,6 +27,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/agent/image/generator', [MyAiController::class, 'imageGenerator']);
     Route::post('/agent/image/generator/process', [MyAiController::class, 'imageGeneratorProcess'])->name('image.generator');
+    
+    Route::get('/agent/transcript/generator', [MyAiController::class, 'transcriptGenerator']);
+    Route::post('/agent/transcript/generator/process', [MyAiController::class, 'transcriptGeneratorProcess'])->name('transcript.generator');
 });
 
 require __DIR__.'/settings.php';

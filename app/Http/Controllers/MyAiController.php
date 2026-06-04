@@ -12,6 +12,7 @@ use Laravel\Ai\Image;
 use Illuminate\Support\Str;
 use Laravel\Ai\Audio;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Ai\Transcription;
 
 class MyAiController extends Controller
 {
@@ -88,6 +89,9 @@ class MyAiController extends Controller
             'content_topic' => 'required|string|max:255',
         ]);
         $topic = $validated['content_topic'];
+        /**
+         * Tell me about this image or describe the content of this image
+         */
         $response =  (new ImageAnalyzer())->prompt(
             "{$topic}",
             attachments: [
@@ -119,26 +123,59 @@ class MyAiController extends Controller
         $validated = $request->validate([
             'content_topic' => 'required|string|max:255',
         ]);
-        // dd(asset('storage/app/private/'.'my-image.jpg'));
         $topic = $validated['content_topic'];
-        $image = Image::of($topic)->generate();
         /**
+         * save the updated image in the storage
+         */
+        $imageInput = $request->file('image');
+        $fileName = $imageInput->getClientOriginalName();
+        $path = Storage::putFileAs('uploads', $request->file('image'), $fileName);
+        /**
+         * Update the attachment photo. Ex. Change the background of image into light blue
+         */
+        $image = Image::of($topic)
+            ->attachments([
+                Files\Image::fromStorage($path),
+            ])
+            ->generate();
+        /**
+         * Only generate image from the topic
+         * $image = Image::of($topic)->generate(); 
+         */
+        /**
+         * Store the generated image in the storage 
          * $path = $image->store();
          * $path = $image->storeAs('image.jpg');
          * $path = $image->storePublicly();
          * $path = $image->storePubliclyAs('my-image.jpg');
          */
-
-        $path =  $image->storePubliclyAs('my-image.jpg');
+        $path =  $image->storePubliclyAs("generated/" . $fileName);
         $path = asset('storage/'.$path);
-
         return Inertia::render('Ai/ImageGenerator', [
             'result' => $path,
             'submittedTopic' => $topic
         ]);
     }
 
-    public function ximageGeneratorProcess(Request $request)
+    public function transcriptGenerator()
+    {
+        return Inertia::render('Ai/TranscriptGenerator');
+    }
+
+    public function transcriptGeneratorProcess(Request $request)
+    {
+        /**
+         * Upload audio file or give text
+         */
+        $transcript = Transcription::fromUpload($request->file('file'))->generate();
+        /** Error: Application rate limited by AI provider [openai]. */
+        // return (string) $transcript;
+        return Inertia::render('Ai/TranscriptGenerator', [
+            'result' => (string) $transcript,
+        ]);
+    }
+
+    public function audioGeneratorProcess(Request $request)
     {
         $validated = $request->validate([
             'content_topic' => 'required|string|max:255',
