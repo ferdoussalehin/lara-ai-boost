@@ -175,6 +175,11 @@ class MyAiController extends Controller
         ]);
     }
 
+    public function audioGenerator()
+    {
+        return Inertia::render('Ai/AudioGenerator');
+    }
+
     public function audioGeneratorProcess(Request $request)
     {
         $validated = $request->validate([
@@ -182,7 +187,7 @@ class MyAiController extends Controller
         ]);
         $topic = $validated['content_topic'];
         $audio = Audio::of($topic)
-            ->female()
+            ->male()
             ->instructions('Said like a pirate')
             ->generate();
         /**
@@ -192,7 +197,8 @@ class MyAiController extends Controller
          * $path = $image->storePubliclyAs('my-image.jpg');
          */
         $path =  $audio->storePubliclyAs('my-mp3.mp3');
-        return Inertia::render('Ai/ImageGenerator', [
+        $path = asset('storage/'.$path);
+        return Inertia::render('Ai/AudioGenerator', [
             'result' => $path,
             'submittedTopic' => $topic
         ]);

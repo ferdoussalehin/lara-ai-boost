@@ -30,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/agent/transcript/generator', [MyAiController::class, 'transcriptGenerator']);
     Route::post('/agent/transcript/generator/process', [MyAiController::class, 'transcriptGeneratorProcess'])->name('transcript.generator');
+
+    Route::get('/agent/audio/generator', [MyAiController::class, 'audioGenerator']);
+    Route::post('/agent/audio/generator/process', [MyAiController::class, 'audioGeneratorProcess'])->name('audio.generator');
 });
 
 require __DIR__.'/settings.php';
