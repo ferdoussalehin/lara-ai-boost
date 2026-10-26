@@ -33,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/agent/audio/generator', [MyAiController::class, 'audioGenerator']);
     Route::post('/agent/audio/generator/process', [MyAiController::class, 'audioGeneratorProcess'])->name('audio.generator');
+
+    Route::resource('categories', CategoryController::class);
 });
 
 require __DIR__.'/settings.php';
